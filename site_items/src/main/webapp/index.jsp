@@ -33,7 +33,7 @@
     <div class="me-md-10"></div>
     <div id="pontos" class="text-white ">10</div>
     <div class="flex-shrink-0 dropdown" id="caixinha">
-        <p><%="gui"%>></p>
+        <p><%="gui"%></p>
         <ul class="dropdown-menu dropdown-menu-end" id="logoutbox">
             <li>
                 <a class="dropdown-item" href="#" >terminar sessão</a>
@@ -76,7 +76,7 @@
                 <input class="btn btn-primary" type="button" id="botaocard">
             </div>
         </div>
-        <%} %>
+        <% } %>
         <% } %>
         <h2>Classificação:</h2>
         <table class="table">
@@ -102,8 +102,6 @@
     <h1>adicionar item</h1>
     <form method="POST">
         <select class="form-select" id="itemselecionado">
-            <option value="mascara" id="mascara">mascara</option>
-            <option value="acessorio" id="acessorio">acessorio</option>
         </select>
         <div id="quantidadebox" class="d-flex">
         <input type="number" placeholder="quantidade" id="quantidade-items" class="form-control w-50" name="quantidade-items">
@@ -124,17 +122,23 @@
             $("#logoutbox").removeClass("show");
         })
         $("#adicionaritem").on("change",function() {
-            imagem.src = $(this).find("option:selected").val()+".png";
+
             fetch("dados.json")
                 .then(res => res.json())
                 .then(obj => {
-                    Object.entries(obj["items"]).forEach(([key,value]) => {
-                        if (obj["items"][key.toString()]["nome"] == $(this).find("option:selected").val()) {
-                            $("#texto").text("pontos: "+obj["items"][key.toString()]["pontos"])
-                            console.log(obj["items"][key.toString()]["pontos"])
+                    Object.entries(obj["vendas"]).forEach(([key,value]) => {
+                        Object.entries(obj["items"]).forEach(([keyitem,valueitem]) => {
+                        if (obj["vendas"][key.toString()]["id"] == obj["items"][keyitem.toString()]) {
+                            $("#itemselecionado").html("<option value='"+obj["items"][keyitem.toString()]["nome"]+"'></option>")
+                            if (obj["items"][keyitem.toString()]["nome"] == $(this).find("option:selected").val()) {
+                                $("#texto").text("pontos: " + obj["items"][key.toString()]["pontos"])
+                                console.log(obj["items"][keyitem.toString()]["pontos"])
+                            }
                         }
+                        })
                     })
                 })
+            imagem.src = $(this).find("option:selected").val()+".png";
         });
         fetch("dados.json")
             .then(res => res.json())

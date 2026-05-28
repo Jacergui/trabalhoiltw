@@ -1,4 +1,13 @@
+<%@ page import="org.json.JSONObject" %>
+<%@ page import="java.nio.file.Files" %>
+<%@ page import="java.nio.file.Paths" %>
+<%@ page import="java.util.Objects" %>
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
+<% String conteudo = new String(Files.readAllBytes(Paths.get("C:\\Users\\Utilizador\\IdeaProjects\\site_items\\src\\main\\webapp\\dados.json")));
+    JSONObject json =  new JSONObject(conteudo);
+    JSONObject vendas = json.getJSONObject("vendas");
+    JSONObject items = json.getJSONObject("items");
+%>
 <html>
 <head>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
@@ -24,7 +33,7 @@
     <div class="me-md-10"></div>
     <div id="pontos" class="text-white ">10</div>
     <div class="flex-shrink-0 dropdown" id="caixinha">
-        <p><%="gui"%>></p>
+        <p><%="gui"%></p>
         <ul class="dropdown-menu dropdown-menu-end" id="logoutbox">
             <li>
                 <a class="dropdown-item" href="#" >terminar sessão</a>
@@ -51,13 +60,24 @@
         </ul>
     </div>
     <div class="col">
-        <div class="card">
-            <img src="https://s2-techtudo.glbimg.com/XGcynglSejDwwimMLYvgJg5RO0o=/0x0:1146x431/1000x0/smart/filters:strip_icc()/i.s3.glbimg.com/v1/AUTH_08fbf48bc0524877943fe86e43087e7a/internal_photos/bs/2018/Q/Q/cdfDMuQKm8niQpq0rWDg/awpdlore.jpg" class="card-img-top" style="width:20%; height:40%;">
+        <% for (int i=1;i<vendas.length();i++) {
+            for (int e=1;e < items.length();e++) {
+            JSONObject id = vendas.getJSONObject(String.valueOf(i));
+            JSONObject iditem = items.getJSONObject(String.valueOf(e));
+        %>
+        <div class="card w-50">
+            <% if (Objects.equals(id.getString("id"), String.valueOf(e))) { %>
+            <img src="<%=iditem.getString("nome")%>" class="card-img-top" style="width:20%; height:40%;">
+            <% } %>
             <div class="card-body">
-                <div class="card-text">arma </div>
+                <div class="card-text"><= </div>
                 <div class="card-text">pontos: </div>
+                <div class="card-text">vendedor:</div>
+                <input class="btn btn-primary" type="button" id="botaocard">
             </div>
         </div>
+        <% } %>
+        <% } %>
         <h2>Classificação:</h2>
         <table class="table">
             <tr>
@@ -82,8 +102,6 @@
     <h1>adicionar item</h1>
     <form method="POST">
         <select class="form-select" id="itemselecionado">
-            <option value="mascara" id="mascara">mascara</option>
-            <option value="acessorio" id="acessorio">acessorio</option>
         </select>
         <div id="quantidadebox" class="d-flex">
         <input type="number" placeholder="quantidade" id="quantidade-items" class="form-control w-50" name="quantidade-items">
@@ -104,17 +122,23 @@
             $("#logoutbox").removeClass("show");
         })
         $("#adicionaritem").on("change",function() {
-            imagem.src = $(this).find("option:selected").val()+".png";
+
             fetch("dados.json")
                 .then(res => res.json())
                 .then(obj => {
-                    Object.entries(obj["items"]).forEach(([key,value]) => {
-                        if (obj["items"][key.toString()]["nome"] == $(this).find("option:selected").val()) {
-                            $("#texto").text("pontos: "+obj["items"][key.toString()]["pontos"])
-                            console.log(obj["items"][key.toString()]["pontos"])
+                    Object.entries(obj["vendas"]).forEach(([key,value]) => {
+                        Object.entries(obj["items"]).forEach(([keyitem,valueitem]) => {
+                        if (obj["vendas"][key.toString()]["id"] == obj["items"][keyitem.toString()]) {
+                            $("#itemselecionado").html("<option value='"+obj["items"][keyitem.toString()]["nome"]+"'></option>")
+                            if (obj["items"][keyitem.toString()]["nome"] == $(this).find("option:selected").val()) {
+                                $("#texto").text("pontos: " + obj["items"][key.toString()]["pontos"])
+                                console.log(obj["items"][keyitem.toString()]["pontos"])
+                            }
                         }
+                        })
                     })
                 })
+            imagem.src = $(this).find("option:selected").val()+".png";
         });
         fetch("dados.json")
             .then(res => res.json())
