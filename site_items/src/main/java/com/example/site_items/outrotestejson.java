@@ -13,7 +13,7 @@ import java.util.Scanner;
 
 public class outrotestejson {
     public static void main(String[] args) throws IOException {
-        //String nomee = "gui";
+        //String nomee = "gui";//substituir por request do nome do login
         //String ficheiro = new String(Files.readAllBytes(Paths.get("C:\\Users\\Utilizador\\IdeaProjects\\site_items\\src\\main\\webapp\\dados.json")));
         //JSONObject json = new JSONObject(ficheiro);
         //JSONObject outro = json.getJSONObject("utilizador");
@@ -25,11 +25,11 @@ public class outrotestejson {
         //        ficheirologin.close();
         //    }
         //}
-        venderitem();
+        compraritem();
     }
 
     public static void compraritem() throws IOException {
-        String itemm = "acessorio";
+        String itemm = "acessorio";//substituir por request do item
         String guardarid = "";
         boolean existe = true;
         int quantidade = 2;
@@ -53,7 +53,7 @@ public class outrotestejson {
                                 for (int a = 1; a <= itemutilizador.length(); a++) {
                                     System.out.println("também nesta função");
                                     JSONObject iditemutilizador = itemutilizador.getJSONObject(String.valueOf(a));
-                                    if (Objects.equals(iditemutilizador.getString("id"), item.getString(String.valueOf(i)))) {
+                                    if (Objects.equals(iditemutilizador.getString("id"), String.valueOf(i))) {
                                         System.out.println("loop aqui?");
                                         int diferencaquantidade = iditemutilizador.getInt("quantidade") + quantidade;
                                         iditemutilizador.put("quantidade", diferencaquantidade);
@@ -80,6 +80,8 @@ public class outrotestejson {
             }
             json.put("items",item);
             Files.write(Paths.get("C:\\Users\\Utilizador\\IdeaProjects\\site_items\\src\\main\\webapp\\dados.json"),json.toString().getBytes());
+            retirarnasvendas();
+            gerirpontosevendasdoutilizador();
         }
     }
 
@@ -94,22 +96,22 @@ public class outrotestejson {
     }
 
     public static void venderitem() throws IOException {
-        String item="acessorio";
+        String item="acessorio";//substituir por request do item
         int quantidade = 2;
         String ficheiro = new String(Files.readAllBytes(Paths.get("C:\\Users\\Utilizador\\IdeaProjects\\site_items\\src\\main\\webapp\\dados.json")));
         JSONObject json = new JSONObject(ficheiro);
         JSONObject items = json.getJSONObject("items");
-        for (int i=1;i<items.length();i++) {
+        for (int i=1;i<=items.length();i++) {
             JSONObject nomeitem = items.getJSONObject(String.valueOf(i));
             if (Objects.equals(nomeitem.getString("nome"), item)) {
-                int aumento = nomeitem.getInt("quantidade") + quantidade;
+                int aumento = nomeitem.optInt("quantidade") + quantidade;
                 nomeitem.put("quantidade",aumento);
                 JSONObject utilizador = json.getJSONObject("utilizador");
-                for (int e=1;e<utilizador.length();e++) {
+                for (int e=1;e<=utilizador.length();e++) {
                     JSONObject nome = utilizador.getJSONObject(String.valueOf(e));
                     if (Objects.equals(nome.getString("nome"), sessaonome())) {
                         JSONObject itemutilizador = nome.getJSONObject("itemsu");
-                        for (int a=1;a<itemutilizador.length();a++) {
+                        for (int a=1;a<=itemutilizador.length();a++) {
                             JSONObject objitemutilizador = itemutilizador.getJSONObject(String.valueOf(a));
                             if (Objects.equals(objitemutilizador.getString("id"), String.valueOf(i))) {
                                 int diferenca = objitemutilizador.getInt("quantidade") - quantidade;
@@ -129,25 +131,29 @@ public class outrotestejson {
         }
         json.put("items",items);
         Files.write(Paths.get("C:\\Users\\Utilizador\\IdeaProjects\\site_items\\src\\main\\webapp\\dados.json"),json.toString().getBytes());
+        vendas();
     }
 
     public static boolean validarcompra() throws IOException {
-        String itemm = "acessorio";
+        String itemm = "acessorio";//substituir por request do item
         int quantidade = 2;
         String conteudo = new String(Files.readAllBytes(Paths.get("C:\\Users\\Utilizador\\IdeaProjects\\site_items\\src\\main\\webapp\\dados.json")));
         JSONObject json = new JSONObject(conteudo);
         JSONObject utilizador = json.getJSONObject("utilizador");
-        for (int n=1;n<utilizador.length();n++) {
+        for (int n=1;n<=utilizador.length();n++) {
             JSONObject id = utilizador.getJSONObject(String.valueOf(n));
-            if (id.get("nome") == sessaonome()) {
+            if (Objects.equals(id.getString("nome"), sessaonome())) {
                 JSONObject item = json.getJSONObject("items");
-                for (int i=1;i<item.length();i++) {
+                for (int i=1;i<=item.length();i++) {
                     JSONObject iditem = item.getJSONObject(String.valueOf(i));
-                    if (iditem.getString("nome") == itemm) {
+                    if (Objects.equals(iditem.getString("nome"), itemm)) {
                         int compra = iditem.getInt("pontos") * quantidade;
                         if (compra <= id.getInt("pontos")) {
+                            System.out.println("verificou que sim");
                             return true;
+
                         } else {
+                            System.out.println("verificou que não");
                             return false;
                         }
                     }
@@ -157,19 +163,19 @@ public class outrotestejson {
         return false;
     }
 
-    public void vendas() throws IOException {
-        String itemm = "acessorio";
+    public static void vendas() throws IOException {
+        String itemm = "acessorio";//substituir por request do item
         boolean existe = true;
         int quantidade = 2;
         String guardarid = "";
         String conteudo = new String(Files.readAllBytes(Paths.get("C:\\Users\\Utilizador\\IdeaProjects\\site_items\\src\\main\\webapp\\dados.json")));
         JSONObject json = new JSONObject(conteudo);
         JSONObject vendas = json.getJSONObject("vendas");
-        JSONObject item = json.getJSONObject("item");
-        for (int i=1;i<item.length();i++) {
-            for (int e=1;e<vendas.length();e++) {
+        JSONObject item = json.getJSONObject("items");
+        for (int i=1;i<=item.length();i++) {
+            for (int e=1;e<=vendas.length();e++) {
                 JSONObject idvenda = vendas.getJSONObject(String.valueOf(e));
-                if (idvenda.getString("nome") == sessaonome()) {
+                if (Objects.equals(idvenda.getString("nomeu"), sessaonome())) {
                     if (String.valueOf(i).equals(idvenda.getString("iditem"))) {
                         int aumento = idvenda.getInt("quantidade") + quantidade;
                         idvenda.put("quantidade", aumento);
@@ -186,24 +192,24 @@ public class outrotestejson {
             objeto.put("iditem",guardarid);
             objeto.put("quantidade",quantidade);
             objeto.put("nomeu",sessaonome());
-            vendas.put(String.valueOf(item.length() + 1),objeto);
+            vendas.put(String.valueOf(vendas.length() + 1),objeto);
         }
         json.put("vendas",vendas);
-        json.put("item",item);
+        json.put("items",item);
         Files.write(Paths.get("C:\\Users\\Utilizador\\IdeaProjects\\site_items\\src\\main\\webapp\\dados.json"),json.toString().getBytes());
     }
 
-    public void retirarnasvendas() throws IOException {
-        String itemm = "acessorio";
+    public static void retirarnasvendas() throws IOException {
+        String itemm = "acessorio";//substituir por request do item
         int quantidade = 2;
         String conteudo = new String(Files.readAllBytes(Paths.get("C:\\Users\\Utilizador\\IdeaProjects\\site_items\\src\\main\\webapp\\dados.json")));
         JSONObject json = new JSONObject(conteudo);
         JSONObject vendas = json.getJSONObject("vendas");
         JSONObject items = json.getJSONObject("items");
-        for(int e=1;e< items.length();e++) {
+        for(int e=1;e<= items.length();e++) {
             JSONObject iditem = items.getJSONObject(String.valueOf(e));
             if (Objects.equals(iditem.getString("nome"), itemm)) {
-                for (int i = 1; i < vendas.length(); i++) {
+                for (int i = 1; i <= vendas.length(); i++) {
                     JSONObject idvendas = vendas.getJSONObject(String.valueOf(i));
                     if (Objects.equals(idvendas.getString("iditem"), String.valueOf(e))) {
                         int diferenca = idvendas.getInt("quantidade") - quantidade;
@@ -217,27 +223,27 @@ public class outrotestejson {
         Files.write(Paths.get("C:\\Users\\Utilizador\\IdeaProjects\\site_items\\src\\main\\webapp\\dados.json"),json.toString().getBytes());
     }
 
-    public void gerirpontosevendasdoutilizador() throws IOException {
+    public static void gerirpontosevendasdoutilizador() throws IOException {
         JSONObject objeto = new JSONObject();
-        int contador = 0;
+        int contador = 1;
         String guardaritem = "";
         String nomee = "gui";//vendedor
-        String itemm = "acessorio";
+        String itemm = "acessorio";//substituir por request do item
         int quantidade = 2;
         int total = 0;
         String conteudo = new String(Files.readAllBytes(Paths.get("C:\\Users\\Utilizador\\IdeaProjects\\site_items\\src\\main\\webapp\\dados.json")));
         JSONObject json = new JSONObject(conteudo);
         JSONObject utilizador = json.getJSONObject("utilizador");
-        JSONObject item = json.getJSONObject("item");
+        JSONObject item = json.getJSONObject("items");
         JSONObject vendas = json.getJSONObject("vendas");
-        for (int e=1;e< item.length();e++) {
-            JSONObject iditem = json.getJSONObject(String.valueOf(e));
+        for (int e=1;e<= item.length();e++) {
+            JSONObject iditem = item.getJSONObject(String.valueOf(e));
             if (Objects.equals(iditem.getString("nome"), itemm)) {
                 total = iditem.getInt("pontos") * quantidade;
                 guardaritem = String.valueOf(e);
             }
         }
-        for(int i=1;i< utilizador.length();i++) {
+        for(int i=1;i<= utilizador.length();i++) {
             JSONObject iduser = utilizador.getJSONObject(String.valueOf(i));
             if (Objects.equals(iduser.getString("nome"), sessaonome())) {
                 int diferenca = iduser.getInt("pontos") - total;
@@ -248,10 +254,10 @@ public class outrotestejson {
                 }
             }
         }
-        for (int i=1;i< vendas.length();i++) {
+        for (int i=1;i<= vendas.length();i++) {
             JSONObject vendasnome = vendas.getJSONObject(String.valueOf(i));
             if (Objects.equals(vendasnome.getString("nomeu"), nomee) && Objects.equals(vendasnome.getString("iditem"), guardaritem)) {
-                vendasnome.remove(String.valueOf(i));
+                vendas.remove(String.valueOf(i));
                 System.out.println("nesta funcao");
             } else {
                 vendas.put(String.valueOf(i),vendasnome);
@@ -267,6 +273,4 @@ public class outrotestejson {
         json.put("utilizador",utilizador);
         Files.write(Paths.get("C:\\Users\\Utilizador\\IdeaProjects\\site_items\\src\\main\\webapp\\dados.json"),json.toString().getBytes());
     }
-
-    //nao comprar o que é do proprio utilizador
 }

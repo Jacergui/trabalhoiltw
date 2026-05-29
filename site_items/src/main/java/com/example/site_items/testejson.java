@@ -27,7 +27,7 @@ public class testejson {
         //json.getJSONObject("utilizador").put(String.valueOf(utilizador.length() + 1),resultado);
         //Files.write(Paths.get("C:\\Users\\Utilizador\\IdeaProjects\\site_items\\src\\main\\webapp\\dados.json"),json.toString().getBytes());
         //System.out.println(utilizador.length());
-        teste();
+        terminarsessao();
     }
 
     public static void teste() throws IOException {
@@ -57,6 +57,12 @@ public class testejson {
 
         json.put("utilizador",objeto);
         Files.write(Paths.get("C:\\Users\\Utilizador\\IdeaProjects\\site_items\\src\\main\\webapp\\dados.json"),json.toString().getBytes());
+    }
+
+    public static void terminarsessao() throws IOException {
+        FileWriter ficheiro = new FileWriter("C:\\Users\\Utilizador\\IdeaProjects\\site_items\\src\\main\\webapp\\sessao.txt");
+        ficheiro.write("");
+        ficheiro.close();
     }
     //terminar sessão
 }
