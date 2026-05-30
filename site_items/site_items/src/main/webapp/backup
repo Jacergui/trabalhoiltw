@@ -1,0 +1,31 @@
+{"utilizador":{"1":{"pontos":10,"nome":"gui","passe":"","itemsu" :{"1":{"id":"2","quantidade": "3"}}},"2":{"pontos":10,"nome":"miguel","passe":"","itemsu": {"1": {"id":"","quantidade": ""}}}},"items": {"1":{"nome":"mascara","quantidade":"","pontos":"10"}, "2": {"nome":"acessorio","pontos":"20","quantidade": "" }}, "vendas": {"1": {"iditem": "","nomeu": "","quantidade": ""}}}
+
+ <% String conteudo = new String(Files.readAllBytes(Paths.get("C:\\Users\\Utilizador\\IdeaProjects\\site_items\\src\\main\\webapp\\dados.json")));
+     JSONObject json =  new JSONObject(conteudo);
+     JSONObject vendas = json.getJSONObject("vendas");
+     JSONObject items = json.getJSONObject("items");
+     JSONObject utilizador = json.getJSONObject("utilizador");
+ %>
+
+ <% String nomeSessao = sessaonome();
+        for (int a=1;a<= utilizador.length();a++) {
+        JSONObject idutilizador = utilizador.getJSONObject(String.valueOf(a));
+        if (Objects.equals(sessaonome(), idutilizador.getString("nome"))) { %>
+            <%=idutilizador.getInt("pontos")%>
+        <%=nomeSessao%>
+        <% }
+            }
+            }catch(Exception e) {
+                response.sendRedirect("login.jsp");
+                return;
+            }%>
+            <% for (int i=1;i<=vendas.length();i++) {
+                        for (int e=1;e <= items.length();e++) {
+                        JSONObject id = vendas.getJSONObject(String.valueOf(i));
+                        JSONObject iditem = items.getJSONObject(String.valueOf(e));
+                    %>
+                    <% if (Objects.equals(id.getString("iditem"), String.valueOf(e))) { %>
+                                <img src="<%=iditem.getString("nome")%>.png" class="card-img-top" style="width:20%; height:40%;">
+                                <% } %>
+                                <% } %>
+                                            <% } %>o
